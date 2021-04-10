@@ -9,16 +9,46 @@ import Foundation
 import RxDataSources
 
 struct SectionOfCustomData {
-    typealias Item = CustomData
-    var items: [Item]
+    var header: String
+    var numbers: [IntItem]
+    var updated: Date
+
+    init(header: String, numbers: [Item], updated: Date) {
+        self.header = header
+        self.numbers = numbers
+        self.updated = updated
+    }
 }
 
-extension SectionOfCustomData: SectionModelType {
-    init(
-        original: SectionOfCustomData,
-        items: [CustomData]
-    ) {
+struct IntItem {
+    let number: Int
+    let date: Date
+}
+
+// MARK: Just extensions to say how to determine identity and how to determine is entity updated
+
+extension SectionOfCustomData: AnimatableSectionModelType {
+    typealias Item = IntItem
+    typealias Identity = String
+
+    var identity: String {
+        return header
+    }
+
+    var items: [IntItem] {
+        return numbers
+    }
+
+    init(original: SectionOfCustomData, items: [Item]) {
         self = original
-        self.items = items
+        self.numbers = items
+    }
+}
+
+extension IntItem: IdentifiableType , Equatable {
+    typealias Identity = Int
+
+    var identity: Int {
+        return number
     }
 }
