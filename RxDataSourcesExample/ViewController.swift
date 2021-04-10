@@ -73,8 +73,8 @@ extension EditingExampleViewController {
     static func dataSource() -> RxTableViewSectionedAnimatedDataSource<SectionOfCustomData> {
         return RxTableViewSectionedAnimatedDataSource(
             animationConfiguration: AnimationConfiguration(insertAnimation: .top,
-                                                                   reloadAnimation: .fade,
-                                                                   deleteAnimation: .left),
+                                                           reloadAnimation: .fade,
+                                                           deleteAnimation: .left),
             configureCell: { _, table, idxPath, item in
                 let cell = table.dequeueReusableCell(withIdentifier: "Cell", for: idxPath)
                 cell.textLabel?.text = "\(item)"
