@@ -8,7 +8,7 @@
 import Foundation
 import RxDataSources
 
-struct SectionOfCustomData {
+struct Section {
     var header: String
     var numbers: [IntItem]
     var updated: Date
@@ -27,7 +27,7 @@ struct IntItem {
 
 // MARK: Just extensions to say how to determine identity and how to determine is entity updated
 
-extension SectionOfCustomData: AnimatableSectionModelType {
+extension Section: AnimatableSectionModelType {
     typealias Item = IntItem
     typealias Identity = String
 
@@ -39,7 +39,7 @@ extension SectionOfCustomData: AnimatableSectionModelType {
         return numbers
     }
 
-    init(original: SectionOfCustomData, items: [Item]) {
+    init(original: Section, items: [Item]) {
         self = original
         self.numbers = items
     }

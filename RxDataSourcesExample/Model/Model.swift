@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CustomData {
+struct Model {
     let id: String
     let title: String
 }

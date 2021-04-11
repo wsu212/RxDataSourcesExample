@@ -1,5 +1,5 @@
 //
-//  EditingExampleViewController.swift
+//  ViewController.swift
 //  RxDataSourcesExample
 //
 //  Created by Wei-Lun Su on 4/9/21.
@@ -11,23 +11,34 @@ import RxSwift
 import RxCocoa
 
 // redux like editing example
-class EditingExampleViewController: UIViewController {
+class ViewController: UIViewController {
     
     private let addButton = UIBarButtonItem()
     private let tableView = UITableView()
+    
+    private let viewModel: ViewModel
     private let disposeBag = DisposeBag()
 
+    // MARK: - Initializer
+    
+    init(viewModel: ViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - View life cycle methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSubviews()
-        
-        let dataSource = EditingExampleViewController.dataSource()
 
-        let sections: [SectionOfCustomData] = [SectionOfCustomData(header: "Section 1", numbers: [], updated: Date()),
-                                               SectionOfCustomData(header: "Section 2", numbers: [], updated: Date()),
-                                               SectionOfCustomData(header: "Section 3", numbers: [], updated: Date())]
+        let sections: [Section] = [Section(header: "Section 1", numbers: [], updated: Date()),
+                                   Section(header: "Section 2", numbers: [], updated: Date()),
+                                   Section(header: "Section 3", numbers: [], updated: Date())]
 
         let initialState = SectionedTableViewState(sections: sections)
         let add3ItemsAddStart = Observable.of((), (), ())
@@ -51,7 +62,7 @@ class EditingExampleViewController: UIViewController {
                 $0.sections
             }
             .share(replay: 1)
-            .bind(to: tableView.rx.items(dataSource: dataSource))
+            .bind(to: tableView.rx.items(dataSource: viewModel.dataSource))
             .disposed(by: disposeBag)
     }
     
@@ -59,6 +70,8 @@ class EditingExampleViewController: UIViewController {
         super.viewDidAppear(animated)
         tableView.setEditing(true, animated: true)
     }
+    
+    // MARK: - Private helper methods
     
     private func configureSubviews() {
         addButton.title = "Add"
@@ -75,30 +88,6 @@ class EditingExampleViewController: UIViewController {
     }
 }
 
-extension EditingExampleViewController {
-    static func dataSource() -> RxTableViewSectionedAnimatedDataSource<SectionOfCustomData> {
-        return RxTableViewSectionedAnimatedDataSource(
-            animationConfiguration: AnimationConfiguration(insertAnimation: .top,
-                                                           reloadAnimation: .fade,
-                                                           deleteAnimation: .left),
-            configureCell: { _, table, idxPath, item in
-                let cell = table.dequeueReusableCell(withIdentifier: "Cell", for: idxPath)
-                cell.textLabel?.text = "\(item)"
-                return cell
-            },
-            titleForHeaderInSection: { ds, section -> String? in
-                return ds[section].header
-            },
-            canEditRowAtIndexPath: { _, _ in
-                return true
-            },
-            canMoveRowAtIndexPath: { _, _ in
-                return true
-            }
-        )
-    }
-}
-
 enum TableViewEditingCommand {
     case AppendItem(item: IntItem, section: Int)
     case MoveItem(sourceIndex: IndexPath, destinationIndex: IndexPath)
@@ -108,9 +97,9 @@ enum TableViewEditingCommand {
 // This is the part
 
 struct SectionedTableViewState {
-    fileprivate var sections: [SectionOfCustomData]
+    fileprivate var sections: [Section]
     
-    init(sections: [SectionOfCustomData]) {
+    init(sections: [Section]) {
         self.sections = sections
     }
     
@@ -119,13 +108,13 @@ struct SectionedTableViewState {
         case .AppendItem(let appendEvent):
             var sections = self.sections
             let items = sections[appendEvent.section].items + appendEvent.item
-            sections[appendEvent.section] = SectionOfCustomData(original: sections[appendEvent.section], items: items)
+            sections[appendEvent.section] = Section(original: sections[appendEvent.section], items: items)
             return SectionedTableViewState(sections: sections)
         case .DeleteItem(let indexPath):
             var sections = self.sections
             var items = sections[indexPath.section].items
             items.remove(at: indexPath.row)
-            sections[indexPath.section] = SectionOfCustomData(original: sections[indexPath.section], items: items)
+            sections[indexPath.section] = Section(original: sections[indexPath.section], items: items)
             return SectionedTableViewState(sections: sections)
         case .MoveItem(let moveEvent):
             var sections = self.sections
@@ -135,15 +124,15 @@ struct SectionedTableViewState {
             if moveEvent.sourceIndex.section == moveEvent.destinationIndex.section {
                 destinationItems.insert(destinationItems.remove(at: moveEvent.sourceIndex.row),
                                         at: moveEvent.destinationIndex.row)
-                let destinationSection = SectionOfCustomData(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
+                let destinationSection = Section(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
                 sections[moveEvent.sourceIndex.section] = destinationSection
                 
                 return SectionedTableViewState(sections: sections)
             } else {
                 let item = sourceItems.remove(at: moveEvent.sourceIndex.row)
                 destinationItems.insert(item, at: moveEvent.destinationIndex.row)
-                let sourceSection = SectionOfCustomData(original: sections[moveEvent.sourceIndex.section], items: sourceItems)
-                let destinationSection = SectionOfCustomData(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
+                let sourceSection = Section(original: sections[moveEvent.sourceIndex.section], items: sourceItems)
+                let destinationSection = Section(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
                 sections[moveEvent.sourceIndex.section] = sourceSection
                 sections[moveEvent.destinationIndex.section] = destinationSection
                 
