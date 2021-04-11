@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  EditingExampleViewController.swift
 //  RxDataSourcesExample
 //
 //  Created by Wei-Lun Su on 4/9/21.
@@ -17,19 +17,11 @@ class EditingExampleViewController: UIViewController {
     private let tableView = UITableView()
     private let disposeBag = DisposeBag()
 
+    // MARK: - View life cycle methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        addButton.title = "Add"
-        self.navigationItem.rightBarButtonItem = addButton
-        view.addSubview(tableView)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        configureSubviews()
         
         let dataSource = EditingExampleViewController.dataSource()
 
@@ -66,6 +58,20 @@ class EditingExampleViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableView.setEditing(true, animated: true)
+    }
+    
+    private func configureSubviews() {
+        addButton.title = "Add"
+        self.navigationItem.rightBarButtonItem = addButton
+        view.addSubview(tableView)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
     }
 }
 
