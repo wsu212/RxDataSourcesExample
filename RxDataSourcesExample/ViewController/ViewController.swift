@@ -51,20 +51,20 @@ class ViewController: UIViewController {
                 Section(id: "0", items: [])
             ]
         )
-                
+        
         let addCommand = Observable.of(addButton
                                         .rx
                                         .tap
                                         .asObservable())
             .merge()
             .map(TableViewEditingCommand.addRandomItem)
-
+        
         let deleteCommand = tableView
             .rx
             .itemDeleted
             .asObservable()
             .map(TableViewEditingCommand.delete)
-
+        
         let movedCommand = tableView
             .rx
             .itemMoved
