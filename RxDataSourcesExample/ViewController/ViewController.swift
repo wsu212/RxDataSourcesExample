@@ -19,20 +19,7 @@ class ViewController: UIViewController {
     private let tableView = UITableView()
     
     // MARK: = Non-UI Properties
-    
-    private let viewModel: ViewModel
     private let disposeBag = DisposeBag()
-
-    // MARK: - Initializer
-    
-    init(viewModel: ViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     // MARK: - View life cycle methods
     
@@ -51,41 +38,33 @@ class ViewController: UIViewController {
                 Section(id: "0", items: [])
             ]
         )
-                
+        
         let addCommand = Observable.of(addButton
                                         .rx
                                         .tap
                                         .asObservable())
             .merge()
             .map(TableViewEditingCommand.addRandomItem)
-
+        
         let deleteCommand = tableView
             .rx
             .itemDeleted
             .asObservable()
             .map(TableViewEditingCommand.delete)
-
+        
         let movedCommand = tableView
             .rx
             .itemMoved
             .map(TableViewEditingCommand.move)
-
-        let commands = Observable.of(
-            addCommand,
-            deleteCommand,
-            movedCommand
+        
+        let viewModel = ViewModel(
+            initialState: initialState,
+            addCommand: addCommand,
+            deleteCommand: deleteCommand,
+            movedCommand: movedCommand
         )
-        .merge()
         
-        let tableViewState = commands
-            .scan(initialState) { state, command in state.execute(command: command) }
-            .startWith(initialState)
-        
-        let sections = tableViewState
-            .map(\.sections)
-            .share(replay: 1)
-        
-        sections
+        viewModel.sections
             .bind(to: tableView.rx.items(dataSource: viewModel.dataSource))
             .disposed(by: disposeBag)
     }

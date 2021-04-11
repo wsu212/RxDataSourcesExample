@@ -6,12 +6,22 @@
 //
 
 import Foundation
+import RxSwift
 import RxDataSources
 
 struct ViewModel {
     let dataSource: AnimatedDataSource
     
-    init() {
+    // MARK: - Outputs
+    let sections: Observable<[Section]>
+    
+    init(
+        initialState: TableViewState,
+        addCommand: Observable<TableViewEditingCommand>,
+        deleteCommand: Observable<TableViewEditingCommand>,
+        movedCommand: Observable<TableViewEditingCommand>
+        )
+    {
         dataSource = AnimatedDataSource(
             animationConfiguration: AnimationConfiguration(insertAnimation: .top,
                                                            reloadAnimation: .fade,
@@ -24,5 +34,20 @@ struct ViewModel {
             canEditRowAtIndexPath: { _, _ in return true },
             canMoveRowAtIndexPath: { _, _ in return true }
         )
+        
+        let commands = Observable.of(
+            addCommand,
+            deleteCommand,
+            movedCommand
+        )
+        .merge()
+        
+        let tableViewState = commands
+            .scan(initialState) { state, command in state.execute(command: command) }
+            .startWith(initialState)
+        
+        sections = tableViewState
+            .map(\.sections)
+            .share(replay: 1)
     }
 }
