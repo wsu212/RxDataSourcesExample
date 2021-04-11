@@ -12,6 +12,8 @@
 		042E34562622870400C16C82 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042E34512622870400C16C82 /* ViewController.swift */; };
 		042E34592622877000C16C82 /* AnimatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042E34582622877000C16C82 /* AnimatedDataSource.swift */; };
 		042E346026228A1000C16C82 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042E345F26228A1000C16C82 /* ViewModel.swift */; };
+		042E346726228C1500C16C82 /* TableViewEditingCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042E346626228C1500C16C82 /* TableViewEditingCommand.swift */; };
+		042E346A26228C5800C16C82 /* TableViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042E346926228C5800C16C82 /* TableViewState.swift */; };
 		044C0C1126211DE600E78AC6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044C0C1026211DE600E78AC6 /* AppDelegate.swift */; };
 		044C0C1326211DE600E78AC6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044C0C1226211DE600E78AC6 /* SceneDelegate.swift */; };
 		044C0C1A26211DE800E78AC6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 044C0C1926211DE800E78AC6 /* Assets.xcassets */; };
@@ -25,6 +27,8 @@
 		042E34512622870400C16C82 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		042E34582622877000C16C82 /* AnimatedDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedDataSource.swift; sourceTree = "<group>"; };
 		042E345F26228A1000C16C82 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		042E346626228C1500C16C82 /* TableViewEditingCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewEditingCommand.swift; sourceTree = "<group>"; };
+		042E346926228C5800C16C82 /* TableViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewState.swift; sourceTree = "<group>"; };
 		044C0C0D26211DE600E78AC6 /* RxDataSourcesExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxDataSourcesExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		044C0C1026211DE600E78AC6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		044C0C1226211DE600E78AC6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,6 +85,15 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		042E346526228C1500C16C82 /* ViewState */ = {
+			isa = PBXGroup;
+			children = (
+				042E346626228C1500C16C82 /* TableViewEditingCommand.swift */,
+				042E346926228C5800C16C82 /* TableViewState.swift */,
+			);
+			path = ViewState;
+			sourceTree = "<group>";
+		};
 		044C0C0426211DE600E78AC6 = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +117,7 @@
 			children = (
 				044C0C1026211DE600E78AC6 /* AppDelegate.swift */,
 				044C0C1226211DE600E78AC6 /* SceneDelegate.swift */,
+				042E346526228C1500C16C82 /* ViewState */,
 				042E34522622870400C16C82 /* DataSource */,
 				042E344D2622870400C16C82 /* Model */,
 				042E34502622870400C16C82 /* ViewController */,
@@ -247,10 +261,12 @@
 			files = (
 				042E34592622877000C16C82 /* AnimatedDataSource.swift in Sources */,
 				042E34552622870400C16C82 /* Model.swift in Sources */,
+				042E346A26228C5800C16C82 /* TableViewState.swift in Sources */,
 				042E34562622870400C16C82 /* ViewController.swift in Sources */,
 				042E34542622870400C16C82 /* Section.swift in Sources */,
 				044C0C1126211DE600E78AC6 /* AppDelegate.swift in Sources */,
 				044C0C1326211DE600E78AC6 /* SceneDelegate.swift in Sources */,
+				042E346726228C1500C16C82 /* TableViewEditingCommand.swift in Sources */,
 				042E346026228A1000C16C82 /* ViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

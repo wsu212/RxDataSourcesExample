@@ -10,7 +10,6 @@ import RxDataSources
 import RxSwift
 import RxCocoa
 
-// redux like editing example
 class ViewController: UIViewController {
     
     private let addButton = UIBarButtonItem()
@@ -40,21 +39,22 @@ class ViewController: UIViewController {
                                    Section(header: "Section 2", numbers: [], updated: Date()),
                                    Section(header: "Section 3", numbers: [], updated: Date())]
 
-        let initialState = SectionedTableViewState(sections: sections)
+        let initialState = TableViewState(sections: sections)
+        
         let add3ItemsAddStart = Observable.of((), (), ())
         let addCommand = Observable.of(addButton.rx.tap.asObservable(), add3ItemsAddStart)
             .merge()
             .map(TableViewEditingCommand.addRandomItem)
 
         let deleteCommand = tableView.rx.itemDeleted.asObservable()
-            .map(TableViewEditingCommand.DeleteItem)
+            .map(TableViewEditingCommand.delete)
 
         let movedCommand = tableView.rx.itemMoved
-            .map(TableViewEditingCommand.MoveItem)
+            .map(TableViewEditingCommand.move)
 
         Observable.of(addCommand, deleteCommand, movedCommand)
             .merge()
-            .scan(initialState) { (state: SectionedTableViewState, command: TableViewEditingCommand) -> SectionedTableViewState in
+            .scan(initialState) { (state: TableViewState, command: TableViewEditingCommand) -> TableViewState in
                 return state.execute(command: command)
             }
             .startWith(initialState)
@@ -86,75 +86,4 @@ class ViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
-}
-
-enum TableViewEditingCommand {
-    case AppendItem(item: IntItem, section: Int)
-    case MoveItem(sourceIndex: IndexPath, destinationIndex: IndexPath)
-    case DeleteItem(IndexPath)
-}
-
-// This is the part
-
-struct SectionedTableViewState {
-    fileprivate var sections: [Section]
-    
-    init(sections: [Section]) {
-        self.sections = sections
-    }
-    
-    func execute(command: TableViewEditingCommand) -> SectionedTableViewState {
-        switch command {
-        case .AppendItem(let appendEvent):
-            var sections = self.sections
-            let items = sections[appendEvent.section].items + appendEvent.item
-            sections[appendEvent.section] = Section(original: sections[appendEvent.section], items: items)
-            return SectionedTableViewState(sections: sections)
-        case .DeleteItem(let indexPath):
-            var sections = self.sections
-            var items = sections[indexPath.section].items
-            items.remove(at: indexPath.row)
-            sections[indexPath.section] = Section(original: sections[indexPath.section], items: items)
-            return SectionedTableViewState(sections: sections)
-        case .MoveItem(let moveEvent):
-            var sections = self.sections
-            var sourceItems = sections[moveEvent.sourceIndex.section].items
-            var destinationItems = sections[moveEvent.destinationIndex.section].items
-            
-            if moveEvent.sourceIndex.section == moveEvent.destinationIndex.section {
-                destinationItems.insert(destinationItems.remove(at: moveEvent.sourceIndex.row),
-                                        at: moveEvent.destinationIndex.row)
-                let destinationSection = Section(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
-                sections[moveEvent.sourceIndex.section] = destinationSection
-                
-                return SectionedTableViewState(sections: sections)
-            } else {
-                let item = sourceItems.remove(at: moveEvent.sourceIndex.row)
-                destinationItems.insert(item, at: moveEvent.destinationIndex.row)
-                let sourceSection = Section(original: sections[moveEvent.sourceIndex.section], items: sourceItems)
-                let destinationSection = Section(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
-                sections[moveEvent.sourceIndex.section] = sourceSection
-                sections[moveEvent.destinationIndex.section] = destinationSection
-                
-                return SectionedTableViewState(sections: sections)
-            }
-        }
-    }
-}
-
-extension TableViewEditingCommand {
-    static var nextNumber = 0
-    static func addRandomItem() -> TableViewEditingCommand {
-        let randSection = Int.random(in: 0...2)
-        let number = nextNumber
-        defer { nextNumber = nextNumber + 1 }
-        let item = IntItem(number: number, date: Date())
-        return TableViewEditingCommand.AppendItem(item: item, section: randSection)
-    }
-}
-
-func + <T>(lhs: [T], rhs: T) -> [T] {
-    var copy = lhs
-    copy.append(rhs)
-    return copy
 }
