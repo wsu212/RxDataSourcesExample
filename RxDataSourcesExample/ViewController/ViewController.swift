@@ -12,8 +12,13 @@ import RxCocoa
 
 class ViewController: UIViewController {
     
+    // MARK: - UI Properties
+    
     private let addButton = UIBarButtonItem()
+    private let doneButton = UIBarButtonItem()
     private let tableView = UITableView()
+    
+    // MARK: = Non-UI Properties
     
     private let viewModel: ViewModel
     private let disposeBag = DisposeBag()
@@ -34,34 +39,53 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSubviews()
-
-        let sections: [Section] = [Section(header: "Section 1", numbers: [], updated: Date()),
-                                   Section(header: "Section 2", numbers: [], updated: Date()),
-                                   Section(header: "Section 3", numbers: [], updated: Date())]
-
-        let initialState = TableViewState(sections: sections)
         
-        let add3ItemsAddStart = Observable.of((), (), ())
-        let addCommand = Observable.of(addButton.rx.tap.asObservable(), add3ItemsAddStart)
+        doneButton
+            .rx
+            .tap
+            .bind { [weak self] in self?.tableView.setEditing(false, animated: true) }
+            .disposed(by: disposeBag)
+
+        let initialState = TableViewState(
+            sections: [
+                Section(id: "0", items: [])
+            ]
+        )
+                
+        let addCommand = Observable.of(addButton
+                                        .rx
+                                        .tap
+                                        .asObservable())
             .merge()
             .map(TableViewEditingCommand.addRandomItem)
 
-        let deleteCommand = tableView.rx.itemDeleted.asObservable()
+        let deleteCommand = tableView
+            .rx
+            .itemDeleted
+            .asObservable()
             .map(TableViewEditingCommand.delete)
 
-        let movedCommand = tableView.rx.itemMoved
+        let movedCommand = tableView
+            .rx
+            .itemMoved
             .map(TableViewEditingCommand.move)
 
-        Observable.of(addCommand, deleteCommand, movedCommand)
-            .merge()
-            .scan(initialState) { (state: TableViewState, command: TableViewEditingCommand) -> TableViewState in
-                return state.execute(command: command)
-            }
+        let commands = Observable.of(
+            addCommand,
+            deleteCommand,
+            movedCommand
+        )
+        .merge()
+        
+        let tableViewState = commands
+            .scan(initialState) { state, command in state.execute(command: command) }
             .startWith(initialState)
-            .map {
-                $0.sections
-            }
+        
+        let sections = tableViewState
+            .map(\.sections)
             .share(replay: 1)
+        
+        sections
             .bind(to: tableView.rx.items(dataSource: viewModel.dataSource))
             .disposed(by: disposeBag)
     }
@@ -75,7 +99,9 @@ class ViewController: UIViewController {
     
     private func configureSubviews() {
         addButton.title = "Add"
-        self.navigationItem.rightBarButtonItem = addButton
+        doneButton.title = "Done"
+        self.navigationItem.leftBarButtonItem = addButton
+        self.navigationItem.rightBarButtonItem = doneButton
         view.addSubview(tableView)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false

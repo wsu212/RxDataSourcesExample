@@ -9,46 +9,20 @@ import Foundation
 import RxDataSources
 
 struct Section {
-    var header: String
-    var numbers: [IntItem]
-    var updated: Date
+    var id: String
+    var items: [Model]
 
-    init(header: String, numbers: [Item], updated: Date) {
-        self.header = header
-        self.numbers = numbers
-        self.updated = updated
+    init(id: String, items: [Model]) {
+        self.id = id
+        self.items = items
     }
 }
-
-struct IntItem {
-    let number: Int
-    let date: Date
-}
-
-// MARK: Just extensions to say how to determine identity and how to determine is entity updated
 
 extension Section: AnimatableSectionModelType {
-    typealias Item = IntItem
-    typealias Identity = String
+    var identity: String { return id }
 
-    var identity: String {
-        return header
-    }
-
-    var items: [IntItem] {
-        return numbers
-    }
-
-    init(original: Section, items: [Item]) {
+    init(original: Section, items: [Model]) {
         self = original
-        self.numbers = items
-    }
-}
-
-extension IntItem: IdentifiableType , Equatable {
-    typealias Identity = Int
-
-    var identity: Int {
-        return number
+        self.items = items
     }
 }

@@ -16,12 +16,11 @@ struct ViewModel {
             animationConfiguration: AnimationConfiguration(insertAnimation: .top,
                                                            reloadAnimation: .fade,
                                                            deleteAnimation: .left),
-            configureCell: { _, table, idxPath, item in
-                let cell = table.dequeueReusableCell(withIdentifier: "Cell", for: idxPath)
-                cell.textLabel?.text = "\(item)"
+            configureCell: { _, table, indexPath, item in
+                let cell = table.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+                cell.textLabel?.text = item.title
                 return cell
             },
-            titleForHeaderInSection: { ds, section -> String? in return ds[section].header },
             canEditRowAtIndexPath: { _, _ in return true },
             canMoveRowAtIndexPath: { _, _ in return true }
         )

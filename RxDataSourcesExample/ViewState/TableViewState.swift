@@ -14,38 +14,59 @@ struct TableViewState {
         self.sections = sections
     }
     
+    /// Generate TableViewState based on given TableViewEditingCommand
     func execute(command: TableViewEditingCommand) -> TableViewState {
         switch command {
-        case .append(let appendEvent):
+        case let .append(item):
+            let section = 0
             var sections = self.sections
-            let items = sections[appendEvent.section].items + appendEvent.item
-            sections[appendEvent.section] = Section(original: sections[appendEvent.section], items: items)
+            let items = sections[section].items + item
+            
+            sections[section] = Section(
+                original: sections[section],
+                items: items
+            )
             return TableViewState(sections: sections)
-        case .delete(let indexPath):
+            
+        case let .delete(indexPath):
             var sections = self.sections
             var items = sections[indexPath.section].items
             items.remove(at: indexPath.row)
-            sections[indexPath.section] = Section(original: sections[indexPath.section], items: items)
-            return TableViewState(sections: sections)
-        case .move(let moveEvent):
-            var sections = self.sections
-            var sourceItems = sections[moveEvent.sourceIndex.section].items
-            var destinationItems = sections[moveEvent.destinationIndex.section].items
             
-            if moveEvent.sourceIndex.section == moveEvent.destinationIndex.section {
-                destinationItems.insert(destinationItems.remove(at: moveEvent.sourceIndex.row),
-                                        at: moveEvent.destinationIndex.row)
-                let destinationSection = Section(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
-                sections[moveEvent.sourceIndex.section] = destinationSection
+            sections[indexPath.section] = Section(
+                original: sections[indexPath.section],
+                items: items
+            )
+            return TableViewState(sections: sections)
+            
+        case let .move(sourceIndex, destinationIndex):
+            var sections = self.sections
+            var sourceItems = sections[sourceIndex.section].items
+            var destinationItems = sections[destinationIndex.section].items
+            
+            if sourceIndex.section == destinationIndex.section {
+                destinationItems.insert(destinationItems.remove(at: sourceIndex.row),
+                                        at: destinationIndex.row)
+                let destinationSection = Section(
+                    original: sections[destinationIndex.section],
+                    items: destinationItems
+                )
+                sections[sourceIndex.section] = destinationSection
                 
                 return TableViewState(sections: sections)
             } else {
-                let item = sourceItems.remove(at: moveEvent.sourceIndex.row)
-                destinationItems.insert(item, at: moveEvent.destinationIndex.row)
-                let sourceSection = Section(original: sections[moveEvent.sourceIndex.section], items: sourceItems)
-                let destinationSection = Section(original: sections[moveEvent.destinationIndex.section], items: destinationItems)
-                sections[moveEvent.sourceIndex.section] = sourceSection
-                sections[moveEvent.destinationIndex.section] = destinationSection
+                let item = sourceItems.remove(at: sourceIndex.row)
+                destinationItems.insert(item, at: destinationIndex.row)
+                let sourceSection = Section(
+                    original: sections[sourceIndex.section],
+                    items: sourceItems
+                )
+                let destinationSection = Section(
+                    original: sections[destinationIndex.section],
+                    items: destinationItems
+                )
+                sections[sourceIndex.section] = sourceSection
+                sections[destinationIndex.section] = destinationSection
                 
                 return TableViewState(sections: sections)
             }

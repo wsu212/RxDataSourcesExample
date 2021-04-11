@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import RxDataSources
 
 struct Model {
-    let id: String
+    let id: Int
     let title: String
+}
+
+extension Model: IdentifiableType, Equatable {
+    var identity: Int { return id }
 }

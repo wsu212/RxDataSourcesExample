@@ -8,18 +8,17 @@
 import Foundation
 
 enum TableViewEditingCommand {
-    case append(item: IntItem, section: Int)
+    case append(item: Model)
     case move(sourceIndex: IndexPath, destinationIndex: IndexPath)
-    case delete(IndexPath)
+    case delete(indexPath: IndexPath)
 }
 
 extension TableViewEditingCommand {
     static var nextNumber = 0
     static func addRandomItem() -> TableViewEditingCommand {
-        let randSection = Int.random(in: 0...2)
         let number = nextNumber
         defer { nextNumber = nextNumber + 1 }
-        let item = IntItem(number: number, date: Date())
-        return .append(item: item, section: randSection)
+        let item = Model(id: number, title: "Model \(number)")
+        return .append(item: item)
     }
 }

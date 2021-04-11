@@ -55,8 +55,8 @@
 		042E344D2622870400C16C82 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				042E344E2622870400C16C82 /* Section.swift */,
 				042E344F2622870400C16C82 /* Model.swift */,
+				042E344E2622870400C16C82 /* Section.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -88,8 +88,8 @@
 		042E346526228C1500C16C82 /* ViewState */ = {
 			isa = PBXGroup;
 			children = (
-				042E346626228C1500C16C82 /* TableViewEditingCommand.swift */,
 				042E346926228C5800C16C82 /* TableViewState.swift */,
+				042E346626228C1500C16C82 /* TableViewEditingCommand.swift */,
 			);
 			path = ViewState;
 			sourceTree = "<group>";
