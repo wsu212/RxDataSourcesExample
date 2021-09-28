@@ -1,5 +1,5 @@
 //
-//  ViewModel.swift
+//  EditableListViewModel.swift
 //  RxDataSourcesExample
 //
 //  Created by Wei-Lun Su on 4/10/21.
@@ -8,7 +8,7 @@
 import Foundation
 import RxDataSources
 
-struct ViewModel {
+struct EditableListViewModel {
     let dataSource: AnimatedDataSource
     
     init() {

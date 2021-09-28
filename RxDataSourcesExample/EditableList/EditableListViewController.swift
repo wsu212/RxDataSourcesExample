@@ -10,7 +10,7 @@ import RxDataSources
 import RxSwift
 import RxCocoa
 
-class ViewController: UIViewController {
+class EditableListViewController: UIViewController {
     
     // MARK: - UI Properties
     
@@ -20,12 +20,12 @@ class ViewController: UIViewController {
     
     // MARK: = Non-UI Properties
     
-    private let viewModel: ViewModel
+    private let viewModel: EditableListViewModel
     private let disposeBag = DisposeBag()
 
     // MARK: - Initializer
     
-    init(viewModel: ViewModel) {
+    init(viewModel: EditableListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
